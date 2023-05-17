@@ -4,12 +4,12 @@ const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
-const { ConnectionStates } = require('mongoose');
-const request = require('request');
 const config = require('config');
+const axios = require('axios');
+const Post = require('../../models/post');
 
 // @route   Get api/profile/me
-// @desc    Get current users profile
+// @desc    Get current users profilex  
 // @access  Private
 router.get('/me', auth, async(req, res) => {
     try {
@@ -145,11 +145,14 @@ router.get('/user/:user_id', async(req, res) => {
 
 router.delete('/', auth, async(req, res) => {
     try {   
+
+        await Promise.all([
+        //Post.deleteMany({ user: req.user.id}),
         // Remove profile
-        await Profile.findOneAndRemove({ user : req.user.id });
+        Profile.findOneAndRemove({ user : req.user.id }),
         // Remove user
-        await User.findOneAndRemove({ _id: req.user.id });
-        
+        User.findOneAndRemove({ _id: req.user.id }),
+    ]);
         res.json({ msd: 'User deleted'});
 
     } catch(err) {
@@ -158,11 +161,11 @@ router.delete('/', auth, async(req, res) => {
     }
 });
 
-// @route   PUT api/profile/expereince
-// @desc    Add profile expereince
+// @route   PUT api/profile/experience
+// @desc    Add profile experience
 // @access  Private
 
-router.put('/expereince', [auth, 
+router.put('/experience', [auth, 
     [
         check('title', 'Title is required')
         .not().
@@ -203,7 +206,7 @@ async(req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.user.id });
 
-        profile.expereince.unshift(newExp);
+        profile.experience.unshift(newExp);
         await profile.save();
         res.json(profile);
     } catch (err) {
@@ -212,17 +215,18 @@ async(req, res) => {
     }
 });
 
-// @route   DELETE api/profile/expereince/:exp_id
-// @desc    delete profile expereince
+// @route   DELETE api/profile/experience/:exp_id
+// @desc    delete profile experience
 // @access  Private
 
-router.delete('/expereince/:exp_id', auth, async(req, res) => {
+router.delete('/experience/:exp_id', auth, async(req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.user.id });
 
         //Get ther remove index
-        const removeIndex = profile.expereince.map(e => e.id).indexOf(req.params.exp_id);
-        profile.expereince.splice(removeIndex, 1);
+        profile.experience = profile.experience.filter(
+            exp => exp._id.toString() !== req.params.exp_id
+          );
         await profile.save();
 
         res.json(profile);
@@ -297,8 +301,9 @@ router.delete('/education/:edu_id', auth, async(req, res) => {
         const profile = await Profile.findOne({ user: req.user.id });
 
         //Get ther remove index
-        const removeIndex = profile.education.map(e => e.id).indexOf(req.params.edu_id);
-        profile.education.splice(removeIndex, 1);
+        profile.education = profile.education.filter(
+            (edu) => edu._id.toString() !== req.params.edu_id
+          );
         await profile.save();
 
         res.json(profile);
