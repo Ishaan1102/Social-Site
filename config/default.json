@@ -1,0 +1,6 @@
+{
+    "mongoURI": "mongodb+srv://ishaan:ishaan@ishaanconector.wywyq.mongodb.net/?retryWrites=true&w=majority",
+    "jwtSecret": "mySecretToken",
+    "githubClientId": "0c84b2347143aef6fe18",
+    "githubSecret": "4a37c536dcf7bff3cb99023afd5d68c4200968bf"
+}
