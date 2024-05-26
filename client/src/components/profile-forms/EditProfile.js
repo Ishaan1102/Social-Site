@@ -32,9 +32,12 @@ const EditProfile = ({ profile: { profile, loading}, createProfile, history, get
       for (const key in profile) {
         if (key in profileData) profileData[key] = profile[key];
       }
-      for (const key in profile.social) {
-        if (key in profileData) profileData[key] = profile.social[key];
-      }
+      profileData.twitter = loading || !profileData.social ? '' : profileData.social.twitter;
+      profileData.facebook = loading || !profileData.social ? '' : profileData.social.facebook;
+      profileData.linkedin = loading || !profileData.social ? '' : profileData.social.linkedin;
+      profileData.youtube = loading || !profileData.social ? '' : profileData.social.youtube;
+      profileData.instagram = loading || !profileData.social ? '' : profileData.social.instagram;
+
       setFormData(profileData);
     }
   }, [loading, getCurrentProfile, profile]);
@@ -243,3 +246,40 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { createProfile, getCurrentProfile })(withRouter(EditProfile));
+//const EditProfile = ({ profile: { profile, loading}, createProfile, history, getCurrentProfile }) => {
+  
+  //   const [formData, setFormData] = useState({
+  //     company: '',
+  //     website: '',
+  //     location: '',
+  //     status: '',
+  //     skills: '',
+  //     githubusername: '',
+  //     bio: '',
+  //     twitter: '',
+  //     facebook: '',
+  //     linkedin: '',
+  //     youtube: '',
+  //     instagram: ''
+  // });
+
+  //   const [displaySocialInputs, toggleSocialInputs] = useState(false);
+
+  //   useEffect(() => {
+  //     if (!profile) getCurrentProfile();
+    
+  //       setFormData({
+  //         company: loading || !profile.company ? '' : profile.company,
+  //         website: loading || !profile.website ? '' : profile.website,
+  //         location: loading || !profile.location ? '' : profile.location,
+  //         status: loading || !profile.status ? '' : profile.status,
+  //         skills: loading || !profile.skills ? '' : profile.skills.join(','),
+  //         githubusername: loading || !profile.githubusername ? '' : profile.githubusername,
+  //         twitter: loading || !profile.social ? '' : profile.social.twitter,
+  //         facebook: loading || !profile.social ? '' : profile.social.facebook,
+  //         linkedin: loading || !profile.social ? '' : profile.social.linkedin,
+  //         youtube: loading || !profile.social ? '' : profile.social.youtube,
+  //         instagram: loading || !profile.social ? '' : profile.social.instagram,
+
+  //       });
+  //   }, [loading, getCurrentProfile, profile]);
